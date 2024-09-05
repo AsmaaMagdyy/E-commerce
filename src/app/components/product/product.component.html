@@ -1,0 +1,47 @@
+<section>
+    
+    <!-- I put container fluid in nav-blank to any comp bytqlb
+      exist in container to I didnot write it again in every comp--> 
+
+      <div class="container">
+       <input [(ngModel)]="text" type="search" placeholder="Search by name..." class="form-control w-75 mx-auto mt-5">
+
+        <div class=" row g-3 my-2">
+
+            @for (product of productyList |search : text; track product.id) {
+                <div class="col-md-3">
+                    <div class="product p-2 " >
+                        <div class="cr" [routerLink]="['/details', product.id]">
+                            <img [src]="product.imageCover" class="w-100" [alt]="product.title">
+                        <h3 class="small text-main">{{product.category.name}}</h3>
+                        <h4 class="h6">{{product.title.split(' ',2).join(' ')}}</h4>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{ product.price | currency :'GBP'}}</span>
+                            <div>
+                                @for (num of [1,2,3,4,5].slice(0,product.ratingsAverage); track $index) {
+                                    <i class="fas fa-star rating-color"></i>    
+                                }
+                                @if (product.ratingsAverage %1 !=0) {
+                                    <i class="fa-solid fa-star-half-stroke rating-color"></i>
+                                }
+                               
+                                <span class="text-muted">{{product.ratingsAverage}}</span>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-1 mt-2">
+                            <button (click)="addProductToCart(product.id)" class="btn-main w-100">Add To Cart</button>
+                            <i (click)="toggleOnWishlist(product)" [ngStyle]="{'color':product.onWishlist?'red':''}" [ngClass]="{'text-red' :existInWishlist(product)}"  class="fa-solid fa-heart fs-3 cr"></i>
+                           
+
+                        </div>
+                    </div>
+                </div>
+    
+            }
+        </div>
+        
+      </div>
+
+
+</section>

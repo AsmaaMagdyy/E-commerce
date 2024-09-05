@@ -1,0 +1,33 @@
+<section>
+    <div class="container bg-body-tertiary my-5 p-5">
+        <h2 class="fw-bolder">My wish List</h2>
+        <div class="row align-items-center ">
+            @for (item of wishListItems; track $index) {
+            <div class="col-md-3">
+                <div class="inner p-4">
+                    <img [src]="item.imageCover" class="w-100" [alt]="item.title">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="inner d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bolder"> {{item.title}} </h5>
+                        <h6 class="text-success fw-bold"> {{item.price}} EGP</h6>
+                        <button class="btn text-danger p-0" (click)="removeFromWishlist(item.id)"><i class="fa-solid fa-trash"></i> Remove</button>
+                    </div>
+                    <div>
+                        <button (click)="addProductToCart(item.id)" class="btn border-main fs-3 ">Add To Cart</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            }@empty {
+                <p class=" text-center fw-bold fs-3">No Products Found In Wishlist 
+                    <i class="fa-solid fa-heart fs-2 text-danger"></i>
+                </p>
+            }
+
+
+        </div>
+    </div>
+</section>

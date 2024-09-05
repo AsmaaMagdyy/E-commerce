@@ -1,0 +1,93 @@
+<section>
+    <div class="container my-4">
+        <div class="row g-0">
+            <div class="col-md-9">
+                <div>
+                    <owl-carousel-o [options]="customOptionsCat">
+                        <ng-template carouselSlide>
+                            <img src="./assets/images/slider-image-3.jpeg" height="300px" class="w-100" alt="">
+                        </ng-template>  
+                        <ng-template carouselSlide>
+                            <img src="./assets/images/slider-image-2.jpeg" height="300px" class="w-100" alt="">
+                        </ng-template>  
+                        <ng-template carouselSlide>
+                            <img src="./assets/images/slider4.jpg" height="300px" class="w-100" alt="">
+                        </ng-template>  
+                      </owl-carousel-o>
+                    
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div>
+                    <img src="./assets/images/slider1.jpg" height="150px" class="w-100" alt="">
+                    <img src="./assets/images/playstation.jpeg" height="150px" class="w-100" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+<!-- Categories section -->
+
+ <section class="my-2">
+    <div class="container my-4">
+    <h2 class="text-center text-main">Popular Categories </h2>
+    <owl-carousel-o [options]="customOptionsMain">
+
+       @for (cat of categoriesList; track cat._id) {
+        <ng-template carouselSlide >
+           <img [src]="cat.image" height="250px" class="w-100" [alt]="cat.name">
+           <h3 class="h6 text-main">{{cat.name}}</h3>
+          </ng-template>
+       }
+    
+      </owl-carousel-o>
+    </div>
+ </section>
+
+<!-- products Section -->
+<section>
+    <div class="container">
+        <h2 class="text-center text-main">Popular Products:</h2>
+       <input [(ngModel)]="text" type="search" placeholder="Search by name..." class="form-control w-75 mx-auto my-2">
+    
+          <div class="row g-3 my-4">
+
+            @for (product of productyList.slice(0,12) | search : text; track product.id) {
+                <div class="col-md-3">
+                    <div class="product p-2 " >
+                        <div class="cr" [routerLink]="['/details', product.id]">
+                            <img [src]="product.imageCover" class="w-100" [alt]="product.title">
+                        <h3 class="small text-main mt-2">{{product.category.name}}</h3>
+                        <h4 class="h6">{{product.title | termtext : 2}}</h4>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{product.price | currency : 'GBP'}}</span>
+                            <div>
+                                @for (num of [1,2,3,4,5].slice(0,product.ratingsAverage); track $index) {
+                                    <i class="fas fa-star rating-color"></i>    
+                                }
+                                @if (product.ratingsAverage %1 !=0) {
+                                    <i class="fa-solid fa-star-half-stroke rating-color"></i>
+                                }
+                               
+                                <span class="text-muted">{{product.ratingsAverage}}</span>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-1 mt-2">
+                            <button (click)="addProductToCart(product.id)" class="btn-main w-100">Add To Cart</button>
+                            <i (click)="toggleOnWishlist(product)" [ngStyle]="{'color':product.onWishlist?'red':''}"  [ngClass]="{'text-red' :existInWishlist(product)}" class="fa-solid fa-heart fs-3 cr"></i>
+                           
+    
+                        </div>
+                    </div>
+                </div>
+    
+            }
+          </div>
+    </div>
+   
+
+
+</section>

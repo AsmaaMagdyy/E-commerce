@@ -1,0 +1,34 @@
+<section>
+    <div class="container my-5 p-5 bg-body-tertiary">
+        <h1 class="text-main fw-bold">My All Orders</h1>
+        <div class="row">
+            @for (order of ordersList; track $index) {
+                <div class="col-md-8">
+                    <h4 class="fw-bold"> Order created at <span class="text-success">{{order.createdAt | date :'short' }}</span></h4>
+                    <div class="col-md-4 ">
+                        <div class="d-flex gap-3 ">
+                            @for (cartItem of order.cartItems ; track $index) {
+                                <div class=" text-center">
+                                    <img [src]="cartItem.product.imageCover" height="150px" class="rounded shadow" [alt]="cartItem.product.title">
+                                    <p class="text-main fs-5 fw-bold mt-1 shadow">{{cartItem.count}}</p>
+                                </div>
+                            }
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div>
+                        <h5 class="fw-bold"> Payment Method : <span class="text-main">{{order.paymentMethodType}}</span> </h5>
+                        <h5 class="fw-bold">Total Price : <span class="text-main">{{ order.totalOrderPrice | currency : 'GBP'}} </span></h5>
+                    </div>
+
+                </div>
+                <hr>
+            }
+            @empty {
+                <h3 class=" fw-bold text-center">No orders found</h3>
+            }
+        </div>
+    </div>
+</section>

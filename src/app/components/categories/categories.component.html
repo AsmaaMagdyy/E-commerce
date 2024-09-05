@@ -1,0 +1,19 @@
+<section>
+    <div class="container my-4">
+        <div class="row g-4">
+            @for (category of categoriesList; track category._id) {
+
+            <div class="col-md-4">
+                <div class=" border rounded product">
+                        <div class="div-height">
+                            <img [src]="category.image" class="w-100 " [alt]="category.name">
+                        </div>
+                        <h2 class="p-3 text-center text-success fw-bold">{{category.name}}</h2>
+                </div>
+            </div>
+
+            }
+
+        </div>
+    </div>
+</section>
