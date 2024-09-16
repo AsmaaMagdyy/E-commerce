@@ -3,23 +3,25 @@
         <div class="row justify-content-around align-items-center ">
             <div class="col-md-5">
                 <div>
-                    <h1 class="fw-bold">Cart Shop</h1>
+                    <h1 class="fw-bold">Cart Shopping</h1>
+                    @if (numOfCartItems>0) {
                     <p class="mt-3 fs-5">total price : <span class="text-main">{{totalPrice | currency :'GBP'}}</span>
                     </p>
+                    }
                 </div>
 
             </div>
             <div class="col-md-5 text-md-end">
                 <div>
-                    @if (cartDetails) {
+                    @if (numOfCartItems>0) {
                     <button [routerLink]="['/orders',cartDetails.cartId ]" class="btn btn-primary p-3  fw-bold">Online
                         Payment</button>
                     <button [routerLink]="['/cod',cartDetails.cartId]"
                         class="btn btn-primary p-3  fw-bold ms-2">COD</button>
-                    }
+
 
                     <p class="mt-3 fs-5">total number of items: <span class="text-main">{{numOfCartItems}}</span></p>
-
+                    }
                 </div>
             </div>
         </div>
@@ -35,15 +37,18 @@
                     <div>
                         <div>{{item.product.title}}</div>
                         <div>{{item.price |currency :'GBP'}}</div>
-                        <button (click)="removeItemfromCart(item.product.id)" class="btn text-danger p-0 mt-2"><i
+
+                        <!-- <button (click)="removeItemfromCart(item.product.id)" class="btn text-danger p-0 mt-2"><i
+                                class="fa-solid fa-trash"></i> Remove</button> -->
+                        <button class="btn text-danger p-0 mt-2 " (click)="confirmBoxRemoveItem(item.product.id)"><i
                                 class="fa-solid fa-trash"></i> Remove</button>
                     </div>
                     <div class="d-flex align-items-center">
-                        <button (click)="updateCartQuantity(item.count+1,item.product.id)"
-                            class="btn fs-2"><i class="fa-regular fa-square-plus text-main "></i></button>
+                        <button (click)="updateCartQuantity(item.count+1,item.product.id)" class="btn fs-2"><i
+                                class="fa-regular fa-square-plus text-main "></i></button>
                         <span class="mx-1">{{item.count}}</span>
-                        <button (click)="updateCartQuantity(item.count-1,item.product.id)"
-                            class="btn fs-2"><i class="fa-regular fa-square-minus text-main"></i></button>
+                        <button (click)="updateCartQuantity(item.count-1,item.product.id)" class="btn fs-2"><i
+                                class="fa-regular fa-square-minus text-main"></i></button>
                     </div>
                 </div>
 
@@ -51,12 +56,14 @@
             <hr>
             }
             @empty {
-            <h3 class=" fw-bold text-center my-3">The cart is empty... <span class="text-danger">Shop Now <i
+            <h3 class=" fw-bold text-center my-3">Your Cart is empty... <span class="text-danger">Shop Now <i
                         class="fa-solid fa-cart-shopping"></i></span></h3>
             }
         </div>
         <div class="text-center">
-            <button (click)="clearCart()" class="btn border-main fs-3 ">Clear Your Cart</button>
+            @if (numOfCartItems>0) {
+            <button class="btn border-main fs-3 " (click)="confirmBoxClearCart()">Clear Your Cart</button>
+            }
         </div>
     </div>
 </section>

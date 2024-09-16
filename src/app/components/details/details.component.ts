@@ -61,7 +61,7 @@ export class DetailsComponent {
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
-          this._CartService.numOfCartItems.next(res.numOfCartItems);
+          this._CartService.numOfCartItems.set(res.numOfCartItems);
         
         }
         

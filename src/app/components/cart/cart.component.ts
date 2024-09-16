@@ -4,11 +4,13 @@ import { Icart, Product2 } from '../../core/interfaces/icart';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [RouterLink,CurrencyPipe],
+  imports: [RouterLink,CurrencyPipe,SweetAlert2Module],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
 })
@@ -47,8 +49,8 @@ this._CartService.removeSpecificCartItem(productId).subscribe({
     // console.log(res);
    if (res.status === 'success') {
      this.getAllCartItems()
-     this._CartService.numOfCartItems.next(res.numOfCartItems)
-     this.toastr.success('product removed from your cart');
+     this._CartService.numOfCartItems.set(res.numOfCartItems)
+     
 
     
      
@@ -64,8 +66,8 @@ clearCart():void{
         // console.log(res);
        if (res.message === 'success') {
          this.getAllCartItems()
-         this._CartService.numOfCartItems.next(res.numOfCartItems)
-         this.toastr.success('Your Cart Is Empty');
+         this._CartService.numOfCartItems.set(res.numOfCartItems)
+        
          
        }
       }
@@ -79,9 +81,59 @@ updateCartQuantity(count:number,productId:string):void{
     next:(res)=>{
       console.log(res);
       this.getAllCartItems();
-      this._CartService.numOfCartItems.next(res.numOfCartItems)
+      this._CartService.numOfCartItems.set(res.numOfCartItems)
       
     }
   })
 }
+
+// ===============SweetAlert2 Clear Cart====================
+confirmBoxClearCart(){
+  Swal.fire({
+    title: 'Are you sure you want to empty your cart?',
+    text: '',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, clear it!',
+    cancelButtonText: 'No, keep it'
+  }).then((result) => {
+    if (result.value) {
+      Swal.fire(
+        'Deleted!',
+        'Your shopping cart is empty.',
+        'success'
+      )
+      this.clearCart();
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire(
+        'Cancelled',
+      )
+    }
+  })
+}
+confirmBoxRemoveItem(id:string){
+  Swal.fire({
+    title: 'Are you sure want to remove this item?',
+    text: '',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, remove it!',
+    cancelButtonText: 'No, keep it'
+  }).then((result) => {
+    if (result.value) {
+      Swal.fire(
+        'Deleted!',
+        'success'
+      )
+      this.removeItemfromCart(id);
+      this.clearCart();
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire(
+        'Cancelled',
+      )
+    }
+  })
+}
+// ===============SweetAlert2 Clear Cart====================
+
 }

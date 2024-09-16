@@ -36,7 +36,7 @@ export class WishlistComponent implements OnInit {
     this._WishlistService.removeProductFromWishlist(productId).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
-          this.toastr.success('Products Removed Successfuly From Wishlist');
+          this.toastr.error('Products Removed Successfuly From Wishlist');
           this.getAllItemsInWishList()
           this.wishlistArr =[...res.data]
           localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr))
@@ -50,7 +50,8 @@ export class WishlistComponent implements OnInit {
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
-          this._CartService.numOfCartItems.next(res.numOfCartItems);
+          this._CartService.numOfCartItems.set(res.numOfCartItems);
+          this.removeFromWishlist(productId);
         }
         
       }

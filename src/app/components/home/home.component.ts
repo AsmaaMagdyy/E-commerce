@@ -47,6 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   customOptionsMain: OwlOptions = {
     loop: true,
+    rtl:true,
     mouseDrag: true,
     touchDrag: false,
     pullDrag: false,
@@ -75,6 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   customOptionsCat: OwlOptions = {
     loop: true,
+    rtl:true,
     mouseDrag: true,
     touchDrag: false,
     pullDrag: false,
@@ -171,7 +173,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (res) => {
         if (res.status == 'success') {
           this.toastr.success(res.message);
-          this._CartService.numOfCartItems.next(res.numOfCartItems);
+          this._CartService.numOfCartItems.set(res.numOfCartItems);
 
         }
 

@@ -1,27 +1,32 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { CartService } from '../../core/services/cart.service';
 import { BehaviorSubject } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MytranslateService } from '../../core/services/mytranslate.service';
 
 @Component({
   selector: 'app-nav-blank',
   standalone: true,
-  imports: [RouterLink,RouterLinkActive],
+  imports: [RouterLink,RouterLinkActive,TranslateModule],
   templateUrl: './nav-blank.component.html',
   styleUrl: './nav-blank.component.scss'
 })
-export class NavBlankComponent implements OnInit{
+export class NavBlankComponent {
 private readonly _CartService =inject(CartService)
-constructor(public readonly _AuthenticationService: AuthenticationService) { }
-cartItems:number=0
+private readonly _MytranslateService =inject(MytranslateService)
+ readonly _TranslateService =inject(TranslateService)
 
-ngOnInit(): void {
- this._CartService.numOfCartItems.subscribe({
-  next: (res) => {
-    this.cartItems=res;
-  }
- })
+
+constructor(public readonly _AuthenticationService: AuthenticationService) { }
+cartItems:Signal<number>=computed(()=> this._CartService.numOfCartItems())
+
+
+
+changeLang(lang:string):void{
+  this._MytranslateService.changeLang(lang);
+
 }
 
 }

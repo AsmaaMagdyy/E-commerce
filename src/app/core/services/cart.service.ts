@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnInit, signal, WritableSignal } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../environments/environments';
 
@@ -7,14 +7,14 @@ import { environment } from '../environments/environments';
   providedIn: 'root'
 })
 export class CartService {
-  numOfCartItems = new BehaviorSubject(0)
+  numOfCartItems :WritableSignal<number>=signal(0);
 
 
   constructor(private _HttpClient:HttpClient) { 
     this.getAllProductsInCart().subscribe({
       next: (res) => {
         console.log(res);
-        this.numOfCartItems.next(res.numOfCartItems);
+        this.numOfCartItems.set(res.numOfCartItems);
         console.log(this.numOfCartItems);
       }
     })

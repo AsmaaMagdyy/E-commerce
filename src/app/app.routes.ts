@@ -1,23 +1,21 @@
 import { Routes } from '@angular/router';
-import { Component } from '@angular/core';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
-import { NotfoundComponent } from './components/notfound/notfound.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { HomeComponent } from './components/home/home.component';
-import { ProductComponent } from './components/product/product.component';
-import { CartComponent } from './components/cart/cart.component';
+import { AllordersComponent } from './components/allorders/allorders.component';
 import { BrandsComponent } from './components/brands/brands.component';
+import { CartComponent } from './components/cart/cart.component';
 import { CategoriesComponent } from './components/categories/categories.component';
-import { authGuard } from './core/guards/auth.guard';
-import { logedGuard } from './core/guards/loged.guard';
+import { CheckoutCashComponent } from './components/checkout-cash/checkout-cash.component';
 import { DetailsComponent } from './components/details/details.component';
 import { ForgetPasswordComponent } from './components/forget-password/forget-password.component';
-import { WishlistComponent } from './components/wishlist/wishlist.component';
-import { AllordersComponent } from './components/allorders/allorders.component';
+import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/login/login.component';
 import { OrdersComponent } from './components/orders/orders.component';
-import { CheckoutCashComponent } from './components/checkout-cash/checkout-cash.component';
+import { ProductComponent } from './components/product/product.component';
+import { RegisterComponent } from './components/register/register.component';
+import { WishlistComponent } from './components/wishlist/wishlist.component';
+import { authGuard } from './core/guards/auth.guard';
+import { logedGuard } from './core/guards/loged.guard';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
 
 export const routes: Routes = [
     {path:'',component:AuthLayoutComponent,canActivate:[logedGuard],children:[
@@ -39,5 +37,5 @@ export const routes: Routes = [
         {path:'orders/:id',component:OrdersComponent,title:'orders'},
         {path:'cod/:id',component:CheckoutCashComponent,title:'checkout'}
     ]},
-    {path:'**',component:NotfoundComponent}
+    {path:'**',loadComponent: () => import('./components/notfound/notfound.component').then((c) => c.NotfoundComponent) }
 ];

@@ -44,7 +44,7 @@ orderSubmit():void{
       if (res.status == 'success') {
         
         this._router.navigate(['/allorders'])
-        this._CartService.numOfCartItems.next(0);
+        this._CartService.numOfCartItems.set(0);
         
       }
     }
