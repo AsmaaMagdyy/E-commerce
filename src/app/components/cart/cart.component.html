@@ -37,9 +37,6 @@
                     <div>
                         <div>{{item.product.title}}</div>
                         <div>{{item.price |currency :'GBP'}}</div>
-
-                        <!-- <button (click)="removeItemfromCart(item.product.id)" class="btn text-danger p-0 mt-2"><i
-                                class="fa-solid fa-trash"></i> Remove</button> -->
                         <button class="btn text-danger p-0 mt-2 " (click)="confirmBoxRemoveItem(item.product.id)"><i
                                 class="fa-solid fa-trash"></i> Remove</button>
                     </div>
