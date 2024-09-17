@@ -4,8 +4,8 @@
             <div class="col-md-5">
                 <div>
                     <h1 class="fw-bold">Cart Shopping</h1>
-                    @if (numOfCartItems>0) {
-                    <p class="mt-3 fs-5">total price : <span class="text-main">{{totalPrice | currency :'GBP'}}</span>
+                    @if (numOfCartItems()>0) {
+                    <p class="mt-3 fs-5">total price : <span class="text-main">{{totalPrice() | currency :'GBP'}}</span>
                     </p>
                     }
                 </div>
@@ -13,20 +13,20 @@
             </div>
             <div class="col-md-5 text-md-end">
                 <div>
-                    @if (numOfCartItems>0) {
-                    <button [routerLink]="['/orders',cartDetails.cartId ]" class="btn btn-primary p-3  fw-bold">Online
+                    @if (numOfCartItems()>0) {
+                    <button [routerLink]="['/orders',cartDetails().cartId ]" class="btn btn-primary p-3  fw-bold">Online
                         Payment</button>
-                    <button [routerLink]="['/cod',cartDetails.cartId]"
+                    <button [routerLink]="['/cod',cartDetails().cartId]"
                         class="btn btn-primary p-3  fw-bold ms-2">COD</button>
 
 
-                    <p class="mt-3 fs-5">total number of items: <span class="text-main">{{numOfCartItems}}</span></p>
+                    <p class="mt-3 fs-5">total number of items: <span class="text-main">{{numOfCartItems()}}</span></p>
                     }
                 </div>
             </div>
         </div>
         <div class="row align-items-center g-2">
-            @for (item of cartItems; track $index) {
+            @for (item of cartItems(); track $index) {
             <div class="col-md-1">
                 <div class="p-0">
                     <img [src]="item.product.imageCover" class="w-100 " [alt]="item.product.title">
@@ -58,7 +58,7 @@
             }
         </div>
         <div class="text-center">
-            @if (numOfCartItems>0) {
+            @if (numOfCartItems()>0) {
             <button class="btn border-main fs-3 " (click)="confirmBoxClearCart()">Clear Your Cart</button>
             }
         </div>

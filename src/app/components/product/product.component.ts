@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { IProduct } from '../../core/interfaces/iproduct';
 import { ProuductsService } from '../../core/services/prouducts.service';
 import { RouterLink } from '@angular/router';
@@ -17,7 +17,7 @@ import { SearchPipe } from '../../core/pipes/search.pipe';
   styleUrl: './product.component.scss'
 })
 export class ProductComponent implements OnInit {
-  productyList:IProduct[]=[];
+  
   
   private readonly _ProuductsService=inject(ProuductsService);
   private readonly _WishlistService=inject(WishlistService);
@@ -25,9 +25,9 @@ export class ProductComponent implements OnInit {
   private readonly _CartService=inject(CartService);
   private readonly _PLATFORM_ID=inject(PLATFORM_ID)
 
-
-  text:string=''
-  wishlistArr:string[]=[]
+  productyList:WritableSignal<IProduct[]>=signal([]);
+  text:WritableSignal<string>=signal('');
+  wishlistArr:WritableSignal<string[]>=signal([])
 
   ngOnInit(): void {
     this.getAllProducts();
@@ -37,14 +37,14 @@ export class ProductComponent implements OnInit {
     this._ProuductsService.getAllProducts().subscribe({
       next:(res)=>{
         console.log(res.data);
-        this.productyList=res.data;
+        this.productyList.set(res.data);
         
         
       }
     })
 
     if (isPlatformBrowser(this._PLATFORM_ID)) {
-      this.wishlistArr= JSON.parse(localStorage.getItem('wishlist')!)
+      this.wishlistArr.set(JSON.parse(localStorage.getItem('wishlist')!))
       }
   }
   addProductToCart(productId:string):void{
@@ -61,7 +61,7 @@ export class ProductComponent implements OnInit {
   }
 
   toggleOnWishlist(product:IProduct){
-    if (this.wishlistArr?.includes(product.id)) {
+    if (this.wishlistArr()?.includes(product.id)) {
       product.onWishlist = false;
       this.removeFromWishList(product);
 
@@ -79,8 +79,8 @@ export class ProductComponent implements OnInit {
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
-          this.wishlistArr =[...res.data]
-          localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr))
+          this.wishlistArr.set([...res.data])
+          localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr()))
         }
       }
     })
@@ -90,16 +90,16 @@ export class ProductComponent implements OnInit {
     this._WishlistService.removeProductFromWishlist(product.id).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
-          this.toastr.success('Products Removed Successfuly From Wishlist');
-          this.wishlistArr =[...res.data]
-          localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr))
+          this.toastr.error('Products Removed Successfuly From Wishlist');
+          this.wishlistArr.set([...res.data])
+          localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr()))
         }
       }
     })
 
   }
   existInWishlist(product: IProduct): boolean {
-    if (this.wishlistArr.includes(product.id)) {
+    if (this.wishlistArr().includes(product.id)) {
       return true;
     } else {
       return false;

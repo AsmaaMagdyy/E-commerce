@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrdersService } from '../../core/services/orders.service';
@@ -17,7 +17,7 @@ export class CheckoutCashComponent {
   private readonly _router = inject(Router)
   private readonly _CartService = inject(CartService)
 
-  cartId:string|null='';
+  cartId:WritableSignal<string|null>=signal('');
 
  orders:FormGroup=new FormGroup({
   
@@ -30,7 +30,7 @@ ngOnInit(): void {
   this._ActivatedRoute.paramMap.subscribe({
     next: (params) => {
       // console.log(params.get('id'));
-    this.cartId=params.get('id');
+    this.cartId.set(params.get('id'));
     }
   })
 }
@@ -38,7 +38,7 @@ ngOnInit(): void {
 orderSubmit():void{
   
   console.log(this.orders.value);
-  this._OrdersService.checkOutPod(this.cartId,this.orders.value).subscribe({
+  this._OrdersService.checkOutPod(this.cartId(),this.orders.value).subscribe({
     next: (res) => {
       console.log(res);
       if (res.status == 'success') {

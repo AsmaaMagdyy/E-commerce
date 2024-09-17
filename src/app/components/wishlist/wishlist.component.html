@@ -2,7 +2,7 @@
     <div class="container bg-body-tertiary my-5 p-5">
         <h2 class="fw-bolder">My wish List</h2>
         <div class="row align-items-center ">
-            @for (item of wishListItems; track $index) {
+            @for (item of wishListItems(); track $index) {
             <div class="col-md-3">
                 <div class="inner p-4">
                     <img [src]="item.imageCover" class="w-100" [alt]="item.title">

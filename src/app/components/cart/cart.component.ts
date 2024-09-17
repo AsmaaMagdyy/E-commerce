@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { CartService } from '../../core/services/cart.service';
 import { Icart, Product2 } from '../../core/interfaces/icart';
 import { RouterLink } from '@angular/router';
@@ -19,10 +19,10 @@ private readonly _CartService=inject(CartService);
 private readonly toastr = inject(ToastrService);
 
 
-cartItems:Product2[]=[] 
-totalPrice:number=0
-numOfCartItems:number=0
-cartDetails:Icart = {} as Icart;
+cartItems:WritableSignal<Product2[]>=signal([]) 
+totalPrice:WritableSignal<number>=signal(0)
+cartDetails:WritableSignal<Icart> =signal({} as Icart) ;
+numOfCartItems:WritableSignal<number>=signal(0)
 
 ngOnInit(): void {
   this.getAllCartItems()
@@ -32,10 +32,11 @@ getAllCartItems():void{
   this._CartService.getAllProductsInCart().subscribe({
     next:(res)=>{
       console.log(res)
-      this.cartDetails=res
-      this.cartItems=res.data.products;
-      this.totalPrice=res.data.totalCartPrice;
-      this.numOfCartItems=res.numOfCartItems;
+      this.cartDetails.set(res)
+      this.cartItems.set(res.data.products);
+      this.totalPrice.set(res.data.totalCartPrice);
+      this.numOfCartItems.set(res.numOfCartItems);
+     
       // console.log(this.totalPrice);
       // console.log(this.cartItems);
       // console.log(this.numOfCartItems);   
@@ -60,7 +61,7 @@ this._CartService.removeSpecificCartItem(productId).subscribe({
 }
 
 clearCart():void{
-  if (this.cartItems.length>0) {
+  
     this._CartService.clearCart().subscribe({
       next:(res)=>{
         // console.log(res);
@@ -72,7 +73,7 @@ clearCart():void{
        }
       }
     })
-  }
+  
   
 }
 
@@ -82,6 +83,7 @@ updateCartQuantity(count:number,productId:string):void{
       console.log(res);
       this.getAllCartItems();
       this._CartService.numOfCartItems.set(res.numOfCartItems)
+      this.toastr.success('Amount of the product updated successfully')
       
     }
   })

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, WritableSignal, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProuductsService } from '../../core/services/prouducts.service';
 import { IProduct } from '../../core/interfaces/iproduct';
@@ -20,7 +20,7 @@ export class DetailsComponent {
   private readonly toastr=inject(ToastrService);
 
   
-  detailsProduct:IProduct |null =null;
+  detailsProduct:WritableSignal<IProduct> =signal({} as IProduct);
 
   customOptions: OwlOptions = {
     loop: true,
@@ -38,14 +38,14 @@ export class DetailsComponent {
     this._ActivatedRoute.paramMap.subscribe({
       next:(p)=>{
         // console.log(p.get('id'));
-        
-       let idProduct = p.get('id');
+        let idProduct:WritableSignal<string|null> = signal(p.get('id'))
+         
 
-       this._ProuductsService.getSpecificProducts(idProduct).subscribe({
+       this._ProuductsService.getSpecificProducts(idProduct()).subscribe({
         next:(res)=>{
           console.log(res.data);
           
-          this.detailsProduct = res.data;
+          this.detailsProduct.set(res.data);
           
         }
        })

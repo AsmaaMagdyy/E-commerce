@@ -35,7 +35,7 @@
     <h2 class="text-center text-main">Popular Categories </h2>
     <owl-carousel-o [options]="customOptionsMain">
 
-       @for (cat of categoriesList; track cat._id) {
+       @for (cat of categoriesList(); track cat._id) {
         <ng-template carouselSlide >
            <img [src]="cat.image" height="250px" class="w-100" [alt]="cat.name">
            <h3 class="h6 text-main">{{cat.name}}</h3>
@@ -54,7 +54,7 @@
     
           <div class="row g-3 my-4">
 
-            @for (product of productyList.slice(0,12) | search : text; track product.id) {
+            @for (product of productyList().slice(0,12) | search : text(); track product.id) {
                 <div class="col-md-3">
                     <div class="product p-2 " >
                         <div class="cr" [routerLink]="['/details', product.id]">

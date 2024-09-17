@@ -2,7 +2,7 @@
     <div class="container my-5 p-5 bg-body-tertiary">
         <h1 class="text-main fw-bold">My All Orders</h1>
         <div class="row">
-            @for (order of ordersList; track $index) {
+            @for (order of ordersList(); track $index) {
                 <div class="col-md-8">
                     <h4 class="fw-bold"> Order created at <span class="text-success">{{order.createdAt | date :'short' }}</span></h4>
                     <div class="col-md-4 ">

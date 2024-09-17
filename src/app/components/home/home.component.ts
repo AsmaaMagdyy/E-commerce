@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { ProuductsService } from '../../core/services/prouducts.service';
 import { IProduct } from '../../core/interfaces/iproduct';
 import { Subscription } from 'rxjs';
@@ -34,13 +34,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   private readonly _PLATFORM_ID = inject(PLATFORM_ID)
 
 
-  productyList: IProduct[] = [];
-  categoriesList: Icategory[] = []
-  inWishlist!: boolean
+  productyList:WritableSignal<IProduct[]> =signal([]);
+  categoriesList:WritableSignal<Icategory[]> = signal([])
+  inWishlist!:WritableSignal<boolean>
 
-  wishlistArr: string[] = []
+  wishlistArr:WritableSignal<string[]> = signal([])
 
-  text: string = ''
+  text:WritableSignal<string> = signal('');
 
 
   getAllProductSub!: Subscription
@@ -94,7 +94,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._CategoriesService.getAllCategories().subscribe({
       next: (res) => {
         // console.log(res.data);
-        this.categoriesList = res.data;
+        this.categoriesList.set(res.data);
 
       },
       error: (err) => {
@@ -106,19 +106,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getAllProductSub = this._ProuductsService.getAllProducts().subscribe({
       next: (res) => {
         console.log(res.data);
-        this.productyList = res.data;
+        this.productyList.set(res.data);
 
       }
     })
     if (isPlatformBrowser(this._PLATFORM_ID)) {
-      this.wishlistArr = JSON.parse(localStorage.getItem('wishlist')!)
+      this.wishlistArr.set(JSON.parse(localStorage.getItem('wishlist')!))
     }
   }
 
  
 
   toggleOnWishlist(product: IProduct) {
-    if (this.wishlistArr?.includes(product.id)) {
+    if (this.wishlistArr()?.includes(product.id)) {
       product.onWishlist = false;
       this.removeFromWishList(product);
 
@@ -136,8 +136,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (res) => {
         if (res.status == 'success') {
           this.toastr.success(res.message);
-          this.wishlistArr = [...res.data]
-          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr))
+          this.wishlistArr.set([...res.data])
+          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr()))
           // console.log(this.wishlistArr);
 
         }
@@ -149,9 +149,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this._WishlistService.removeProductFromWishlist(product.id).subscribe({
       next: (res) => {
         if (res.status == 'success') {
-          this.toastr.success('Products Removed Successfuly From Wishlist');
-          this.wishlistArr = [...res.data]
-          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr))
+          this.toastr.error('Products Removed Successfuly From Wishlist');
+          this.wishlistArr.set([...res.data])
+          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr()))
           // console.log(this.wishlistArr);
 
         }
@@ -161,7 +161,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   existInWishlist(product: IProduct): boolean {
-    if (this.wishlistArr?.includes(product.id)) {
+    if (this.wishlistArr()?.includes(product.id)) {
       return true;
     } else {
       return false;

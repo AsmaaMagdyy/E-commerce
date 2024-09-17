@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { AbstractControl,  FormBuilder,  FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { FormBuilder,FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -17,12 +18,14 @@ export class LoginComponent {
   private readonly _AuthenticationService=inject(AuthenticationService);
   private readonly _FormBuilder=inject(FormBuilder);
   private readonly _Router=inject(Router);
+  private readonly toastr = inject(ToastrService);
 
 
 
-  msgErr:string='';
-  isLoading!:boolean;
-  msgSuccess:string=''
+
+  
+  isLoading:WritableSignal<boolean>=signal(false);
+
 
 
   loginForm:FormGroup = this._FormBuilder.group({
@@ -34,16 +37,16 @@ export class LoginComponent {
 
 
   loginSubmit(): void {
-    this.isLoading=true;
+    this.isLoading.set(true);
 
 
     if(this.loginForm.valid){
       this._AuthenticationService.setLoginForm(this.loginForm.value).subscribe({
         next: (res) => {
-          this.isLoading=false;
+          this.isLoading.set(false);
           console.log(res);
           if (res.message == 'success') {
-            this.msgSuccess='Success  and navigate to home in 2 seconds ';
+            this.toastr.success('Success  and navigate to home in 2 seconds ')
             setTimeout(()=>{
                // 1- store token in local storage
               // 2- decode token in authService to make it shared 
@@ -56,9 +59,9 @@ export class LoginComponent {
           }
         },
         error:(err:HttpErrorResponse)=>{
-          this.isLoading=false;
+          this.isLoading.set(false);
           console.log(err.error.message);
-          this.msgErr=err.error.message;
+          
         }
       })
     }else{

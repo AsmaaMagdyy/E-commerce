@@ -102,17 +102,10 @@
         </div>
         <!-- [disabled]="registerForm.invalid || isLoading" -->
         <button  type="submit" class="btn-main ms-auto d-block">
-            @if(isLoading){
+            @if(isLoading()){
                 <i class="fa-solid fa-spinner fa-spin"></i>
 
             }
             Register</button>
-        @if (msgErr) {
-            <p class="alert alert-danger py-2 my-0">{{msgErr}}</p>
-        }
-        @if (msgSuccess) {
-            <p class="alert alert-success py-2 my-0">{{msgSuccess}}</p>
-        }
-
     </form>
 </section>

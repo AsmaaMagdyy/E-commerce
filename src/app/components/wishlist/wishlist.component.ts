@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { WishlistService } from '../../core/services/wishlist.service';
 import { IProduct } from '../../core/interfaces/iproduct';
 import { ToastrService } from 'ngx-toastr';
@@ -12,11 +12,13 @@ import { CartService } from '../../core/services/cart.service';
   styleUrl: './wishlist.component.scss'
 })
 export class WishlistComponent implements OnInit {
-  wishListItems:IProduct[]=[]
   private readonly _WishlistService=inject(WishlistService);
   private readonly toastr=inject(ToastrService);
   private readonly _CartService=inject(CartService);
-  wishlistArr: string[]=[];
+
+
+  wishListItems:WritableSignal<IProduct[]>=signal([]);
+  wishlistArr:WritableSignal<string[]>=signal([]);
 
 
   ngOnInit(): void {
@@ -26,7 +28,7 @@ export class WishlistComponent implements OnInit {
     this._WishlistService.getWishlist().subscribe({
       next: (res) => {
         console.log(res.data);
-        this.wishListItems=res.data;
+        this.wishListItems.set(res.data);
         
       },
     })
@@ -38,8 +40,8 @@ export class WishlistComponent implements OnInit {
         if (res.status == 'success') {
           this.toastr.error('Products Removed Successfuly From Wishlist');
           this.getAllItemsInWishList()
-          this.wishlistArr =[...res.data]
-          localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr))
+          this.wishlistArr.set([...res.data])
+          localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr()))
         }
       }
     })

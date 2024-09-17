@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../../core/services/authentication.service';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { OrdersService } from '../../core/services/orders.service';
 import { IUserOrders } from '../../core/interfaces/iuser-orders';
 import { CurrencyPipe, DatePipe } from '@angular/common';
@@ -12,7 +11,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
   styleUrl: './allorders.component.scss'
 })
 export class AllordersComponent implements OnInit{
-  ordersList:IUserOrders[]=[]
+  ordersList:WritableSignal<IUserOrders[]>=signal([])
   constructor(private _OrdersService:OrdersService){}
 
   ngOnInit(): void {
@@ -23,7 +22,7 @@ getUserOrders():void{
   this._OrdersService.getUserOrders().subscribe({
     next:(res)=>{
       console.log(res);
-      this.ordersList=res
+      this.ordersList.set(res)
       
     }
   })

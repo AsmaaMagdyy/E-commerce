@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, WritableSignal, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { Router } from '@angular/router';
@@ -16,8 +16,8 @@ export class ForgetPasswordComponent {
   private readonly _AuthenticationService = inject(AuthenticationService);
   private readonly _Router = inject(Router);
 
-  step: number = 1
-  message: string = ''
+  step:WritableSignal<number> = signal(1)
+  message:WritableSignal<string> = signal('')
   VerifyEmail: FormGroup = this._FormBuilder.group({
     email: [null, [Validators.required, Validators.email]]
   })
@@ -45,10 +45,10 @@ export class ForgetPasswordComponent {
       next: (res) => {
         console.log(res);
         if (res.statusMsg === 'success') {
-          this.message = res.message;
+          this.message.set(res.message);
           setTimeout(() => {
-            this.step = 2
-            this.message = ''
+            this.step.set(2)
+            this.message.set('')
           }, 3000)
         }
 
@@ -61,10 +61,10 @@ export class ForgetPasswordComponent {
       next: (res) => {
         console.log(res);
         if (res.status === 'Success') {
-          this.message = res.status;
+          this.message.set(res.status);
           setTimeout(() => {
-            this.step = 3
-            this.message = ''
+            this.step.set(3);
+            this.message.set('')
           }, 3000)
 
         }

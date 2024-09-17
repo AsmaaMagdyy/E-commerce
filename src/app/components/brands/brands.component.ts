@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { BrandsService } from '../../core/services/brands.service';
 import { Ibrands } from '../../core/interfaces/ibrands';
 
@@ -10,7 +10,7 @@ import { Ibrands } from '../../core/interfaces/ibrands';
   styleUrl: './brands.component.scss'
 })
 export class BrandsComponent implements OnInit{
-  brandsList:Ibrands[]=[];
+  brandsList:WritableSignal<Ibrands[]>=signal([]);
   private readonly _BrandsService=inject(BrandsService);
 
   ngOnInit(): void {
@@ -21,7 +21,7 @@ export class BrandsComponent implements OnInit{
     this._BrandsService.getAllBrands().subscribe({
       next:(res)=>{
         // console.log(res.data);
-        this.brandsList=res.data;
+        this.brandsList.set(res.data);
       }
       
     })

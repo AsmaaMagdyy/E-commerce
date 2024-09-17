@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -17,12 +18,11 @@ export class RegisterComponent {
   private readonly _AuthenticationService = inject(AuthenticationService);
   private readonly _FormBuilder = inject(FormBuilder);
   private readonly _Router = inject(Router);
+  private readonly toastr = inject(ToastrService);
 
 
 
-  msgErr: string = '';
-  isLoading!: boolean;
-  msgSuccess: string = ''
+  isLoading:WritableSignal<boolean>=signal(false);
 
 
   registerForm: FormGroup = this._FormBuilder.group({
@@ -33,21 +33,8 @@ export class RegisterComponent {
     phone: [null, [Validators.required, Validators.pattern(/^01[0125][0-9]{8}$/)]]
   }, { validators: this.confirmPassword })
 
-
-
-
-
-  // registerForm: FormGroup = new FormGroup({
-  //   name: new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
-  //   email: new FormControl(null, [Validators.required, Validators.email]),
-  //   password: new FormControl(null, [Validators.required, Validators.pattern(/^\w{6,}$/)]),
-  //   rePassword: new FormControl(null),
-  //   phone: new FormControl(null, [Validators.required, Validators.pattern(/^01[0125][0-9]{8}$/)]),
-  // },this.confirmPassword);
-
-
   registerSubmit(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
 
     if (this.registerForm.valid) {
@@ -56,19 +43,18 @@ export class RegisterComponent {
 
           console.log(res);
           if (res.message == 'success') {
-            this.msgSuccess = 'Success  and navigate to login in 2 seconds ';
+            this.toastr.success('Success  and navigate to home in 2 seconds ')
             setTimeout(() => {
               this._Router.navigate(['/login'])
             }, 2000)
 
           }
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
         error: (err: HttpErrorResponse) => {
 
           console.log(err.error.message);
-          this.msgErr = err.error.message;
-          this.isLoading = false;
+          this.isLoading.set(false);
         }
       })
     } else {
