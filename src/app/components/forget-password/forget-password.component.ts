@@ -1,7 +1,8 @@
-import { Component, inject, WritableSignal, signal } from '@angular/core';
+import { Component, inject, WritableSignal, signal, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-forget-password',
@@ -10,14 +11,19 @@ import { Router } from '@angular/router';
   templateUrl: './forget-password.component.html',
   styleUrl: './forget-password.component.scss'
 })
-export class ForgetPasswordComponent {
+export class ForgetPasswordComponent implements OnDestroy{
   
   private readonly _FormBuilder = inject(FormBuilder);
   private readonly _AuthenticationService = inject(AuthenticationService);
   private readonly _Router = inject(Router);
 
   step:WritableSignal<number> = signal(1)
-  message:WritableSignal<string> = signal('')
+  message:WritableSignal<string> = signal('');
+  setEmailVerifySub!:Subscription;
+  setCodeVerifySub!:Subscription;
+  setResetPassSub!:Subscription;
+
+
   VerifyEmail: FormGroup = this._FormBuilder.group({
     email: [null, [Validators.required, Validators.email]]
   })
@@ -41,7 +47,7 @@ export class ForgetPasswordComponent {
     this.resetPassword.get('email')?.patchValue(emailValue);
 
     
-    this._AuthenticationService.setEmailVerify(this.VerifyEmail.value).subscribe({
+    this.setEmailVerifySub=this._AuthenticationService.setEmailVerify(this.VerifyEmail.value).subscribe({
       next: (res) => {
         console.log(res);
         if (res.statusMsg === 'success') {
@@ -57,7 +63,7 @@ export class ForgetPasswordComponent {
   }
 
   verifyCodeSubmit(): void {
-    this._AuthenticationService.setCodeVerify(this.VerifyCode.value).subscribe({
+    this.setCodeVerifySub=this._AuthenticationService.setCodeVerify(this.VerifyCode.value).subscribe({
       next: (res) => {
         console.log(res);
         if (res.status === 'Success') {
@@ -74,7 +80,7 @@ export class ForgetPasswordComponent {
   }
 
   resetPasswordSubmit():void{
-    this._AuthenticationService.setResetPass(this.resetPassword.value).subscribe({
+    this.setResetPassSub=this._AuthenticationService.setResetPass(this.resetPassword.value).subscribe({
       next: (res) => {
         console.log(res);
        localStorage.setItem('userToken',res.token)
@@ -83,5 +89,9 @@ export class ForgetPasswordComponent {
       }
     });
   }
-
+ngOnDestroy(): void {
+  this.setEmailVerifySub?.unsubscribe();
+  this.setCodeVerifySub?.unsubscribe();
+  this.setResetPassSub?.unsubscribe();
+}
 }

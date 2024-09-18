@@ -11,7 +11,7 @@ export class OrdersService {
 
   constructor(private _HttpClient: HttpClient , private _AuthenticationService:AuthenticationService) { }
 
-  checkOutPod(idCart:string|null,shippingDetails: object): Observable<any> {
+  checkOutCod(idCart:string|null,shippingDetails: object): Observable<any> {
     return this._HttpClient.post(`${environment.baseUrl}/api/v1/orders/${idCart}`,
       {
         "shippingAddress": shippingDetails

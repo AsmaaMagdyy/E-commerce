@@ -12,13 +12,16 @@ export const errorsInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(catchError((err) => {
 
 
-    //   if (req.url.includes('cart')) {
-    //     _ToastrService.error(err.error.message,'FreshCart')
-    // }
+    if (req.url.includes('update')){
+      console.log('interceptor', err.error.errors.msg);
 
-    console.log('interceptor', err.error.message);
+      _ToastrService.error(err.error.errors.msg, 'FreshCart')
+    }else{
+      console.log('interceptor', err.error.message);
 
-    _ToastrService.error(err.error.message, 'FreshCart')
+      _ToastrService.error(err.error.message, 'FreshCart')
+    }
+    
 
     return throwError(() => err)
   }));

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { CartService } from '../../core/services/cart.service';
 import { Icart, Product2 } from '../../core/interfaces/icart';
 import { RouterLink } from '@angular/router';
@@ -6,6 +6,7 @@ import { CurrencyPipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -14,22 +15,28 @@ import Swal from 'sweetalert2';
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
 private readonly _CartService=inject(CartService);
 private readonly toastr = inject(ToastrService);
 
 
-cartItems:WritableSignal<Product2[]>=signal([]) 
-totalPrice:WritableSignal<number>=signal(0)
+cartItems:WritableSignal<Product2[]>=signal([]); 
+totalPrice:WritableSignal<number>=signal(0);
 cartDetails:WritableSignal<Icart> =signal({} as Icart) ;
-numOfCartItems:WritableSignal<number>=signal(0)
+numOfCartItems:WritableSignal<number>=signal(0);
+
+
+getAllProductsInCartSub!:Subscription;
+removeSpecificCartItemSub!:Subscription;
+clearCartSub!:Subscription;
+updateCartProductQuantitySub!:Subscription;
 
 ngOnInit(): void {
   this.getAllCartItems()
 }
 
 getAllCartItems():void{
-  this._CartService.getAllProductsInCart().subscribe({
+  this.getAllProductsInCartSub=this._CartService.getAllProductsInCart().subscribe({
     next:(res)=>{
       console.log(res)
       this.cartDetails.set(res)
@@ -45,7 +52,7 @@ getAllCartItems():void{
 }
 
 removeItemfromCart(productId:string):void{
-this._CartService.removeSpecificCartItem(productId).subscribe({
+this.removeSpecificCartItemSub=this._CartService.removeSpecificCartItem(productId).subscribe({
   next:(res)=>{
     // console.log(res);
    if (res.status === 'success') {
@@ -62,7 +69,7 @@ this._CartService.removeSpecificCartItem(productId).subscribe({
 
 clearCart():void{
   
-    this._CartService.clearCart().subscribe({
+    this.clearCartSub=this._CartService.clearCart().subscribe({
       next:(res)=>{
         // console.log(res);
        if (res.message === 'success') {
@@ -78,7 +85,7 @@ clearCart():void{
 }
 
 updateCartQuantity(count:number,productId:string):void{
-  this._CartService.updateCartProductQuantity(count,productId).subscribe({
+ this.updateCartProductQuantitySub= this._CartService.updateCartProductQuantity(count,productId).subscribe({
     next:(res)=>{
       console.log(res);
       this.getAllCartItems();
@@ -137,5 +144,12 @@ confirmBoxRemoveItem(id:string){
   })
 }
 // ===============SweetAlert2 Clear Cart====================
+
+ngOnDestroy(): void {
+  this.getAllProductsInCartSub?.unsubscribe();
+  this.removeSpecificCartItemSub?.unsubscribe();
+  this.clearCartSub?.unsubscribe();
+  this.updateCartProductQuantitySub?.unsubscribe();
+}
 
 }

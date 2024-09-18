@@ -1,10 +1,11 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy {
 
   private readonly _AuthenticationService = inject(AuthenticationService);
   private readonly _FormBuilder = inject(FormBuilder);
@@ -23,6 +24,7 @@ export class RegisterComponent {
 
 
   isLoading:WritableSignal<boolean>=signal(false);
+  setRegisterFormSub!:Subscription;
 
 
   registerForm: FormGroup = this._FormBuilder.group({
@@ -38,7 +40,7 @@ export class RegisterComponent {
 
 
     if (this.registerForm.valid) {
-      this._AuthenticationService.setRegisterForm(this.registerForm.value).subscribe({
+      this.setRegisterFormSub=this._AuthenticationService.setRegisterForm(this.registerForm.value).subscribe({
         next: (res) => {
 
           console.log(res);
@@ -70,5 +72,9 @@ export class RegisterComponent {
     } else {
       return { mismatch: true }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.setRegisterFormSub?.unsubscribe();
   }
 }

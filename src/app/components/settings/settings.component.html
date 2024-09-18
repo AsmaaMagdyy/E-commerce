@@ -1,0 +1,22 @@
+<section>
+    <div class="d-flex justify-content-around align-items-center ">
+        <nav class=" py-5 px-2 text-start h-320">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 h-100 d-flex flex-column justify-content-evenly">
+                <li class="nav-item">
+                    <a class="nav-link fs-5 shadow-sm text-main" routerLink="updateaccount">
+                       Update My data<i class="text-black ms-3 fa-solid fa-file-invoice"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5  shadow-sm text-main" routerLink="updatepass">
+                       Update Password<i class="text-black ms-2 fa-solid fa-key"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="col-9">
+        <router-outlet></router-outlet>
+        </div>
+    </div>
+    
+</section>

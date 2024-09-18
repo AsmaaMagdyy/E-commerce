@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { IProduct } from '../../core/interfaces/iproduct';
 import { ProuductsService } from '../../core/services/prouducts.service';
 import { RouterLink } from '@angular/router';
@@ -8,6 +8,7 @@ import { CurrencyPipe, isPlatformBrowser, NgClass, NgStyle } from '@angular/comm
 import { CartService } from '../../core/services/cart.service';
 import { FormsModule } from '@angular/forms';
 import { SearchPipe } from '../../core/pipes/search.pipe';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product',
@@ -16,7 +17,7 @@ import { SearchPipe } from '../../core/pipes/search.pipe';
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss'
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit ,OnDestroy{
   
   
   private readonly _ProuductsService=inject(ProuductsService);
@@ -27,14 +28,20 @@ export class ProductComponent implements OnInit {
 
   productyList:WritableSignal<IProduct[]>=signal([]);
   text:WritableSignal<string>=signal('');
-  wishlistArr:WritableSignal<string[]>=signal([])
+  wishlistArr:WritableSignal<string[]>=signal([]);
+
+  getAllProductsSub!:Subscription;
+  addToCartSub!:Subscription;
+  addProductToWishlistSub!: Subscription;
+  removeProductFromWishlistSub!: Subscription;
+
 
   ngOnInit(): void {
     this.getAllProducts();
   }
 
   getAllProducts():void{
-    this._ProuductsService.getAllProducts().subscribe({
+    this.getAllProductsSub=this._ProuductsService.getAllProducts().subscribe({
       next:(res)=>{
         console.log(res.data);
         this.productyList.set(res.data);
@@ -48,7 +55,7 @@ export class ProductComponent implements OnInit {
       }
   }
   addProductToCart(productId:string):void{
-    this._CartService.addToCart(productId).subscribe({
+    this.addToCartSub=this._CartService.addToCart(productId).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
@@ -75,24 +82,29 @@ export class ProductComponent implements OnInit {
   addToWishList(product:IProduct):void{
     console.log(product);
   
-    this._WishlistService.addProductToWishlist(product.id).subscribe({
+    this.addProductToWishlistSub=this._WishlistService.addProductToWishlist(product.id).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
           this.wishlistArr.set([...res.data])
           localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr()))
+          this._WishlistService.wishlistItemsNum.set(res.data.length);
+
         }
       }
     })
 
   }
   removeFromWishList(product:IProduct):void{
-    this._WishlistService.removeProductFromWishlist(product.id).subscribe({
+    this.removeProductFromWishlistSub=this._WishlistService.removeProductFromWishlist(product.id).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.error('Products Removed Successfuly From Wishlist');
           this.wishlistArr.set([...res.data])
           localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr()))
+          this._WishlistService.wishlistItemsNum.set(res.data.length);
+
+
         }
       }
     })
@@ -106,4 +118,10 @@ export class ProductComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.getAllProductsSub?.unsubscribe();
+    this.removeProductFromWishlistSub?.unsubscribe();
+    this.addProductToWishlistSub?.unsubscribe();
+    this.addToCartSub?.unsubscribe();
+  }
 }

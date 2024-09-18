@@ -8,7 +8,9 @@
         "categories":"الأقسام",
         "myOrders":"طلباتي",
         "signout":"تسجيل خروج",
-        "lang":"اللغة"
+        "lang":"اللغة",
+        "settings":"الاعدادات"
+
 
     }
 }

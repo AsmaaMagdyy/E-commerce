@@ -15,7 +15,7 @@ export class CartService {
       next: (res) => {
         console.log(res);
         this.numOfCartItems.set(res.numOfCartItems);
-        console.log(this.numOfCartItems);
+        // console.log(this.numOfCartItems);
       }
     })
   }

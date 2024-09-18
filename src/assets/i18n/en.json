@@ -8,7 +8,9 @@
         "categories":"Categories",
         "myOrders":"My Orders",
         "signout":"SignOut",
-        "lang":"Lang"
+        "lang":"Lang",
+        "settings":"Settings"
+       
 
     }
 }

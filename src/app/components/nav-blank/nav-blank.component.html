@@ -1,84 +1,106 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container">
-      <a class="navbar-brand" routerLink="home">
-        <img src="./assets/images/freshcart-logo.svg" alt="freshcart-logo">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-        <ul class="navbar-nav  mb-2 mb-lg-0">
-          
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="home">{{"navbar.home" | translate}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="wishlist">{{"navbar.wishlist" | translate}} <i class="fa-solid fa-heart text-danger"></i></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="products">{{"navbar.products" | translate}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="cart">{{"navbar.cart" | translate}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="categories">{{"navbar.categories" | translate}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="brands">{{"navbar.brands" | translate}}</a>
-          </li>  
-          <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active-link" routerLink="allorders">{{"navbar.myOrders" | translate}}</a>
-          </li>  
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             {{"navbar.lang" | translate}}
-            </a>
-            <ul class="dropdown-menu">
-              <li [class.bg-info]="_TranslateService.currentLang=='en'"><a (click)="changeLang('en')" class="dropdown-item">EN</a></li>
-              <li [class.bg-info]="_TranslateService.currentLang=='ar'"><a (click)="changeLang('ar')" class="dropdown-item">AR</a></li>
-        
-            </ul>
-          </li>
-        </ul>
-        <ul class="navbar-nav  mb-2 mb-lg-0">
-          <li class="nav-item me-4 mt-1">
-            <a routerLink="cart" class="nav-link position-relative " >
-              <i class="fa-solid fa-cart-shopping  fs-2"></i>
-              <span class="bg-main text-white position-absolute start-80 translate-middle px-2 py-1 bg-danger rounded ">
-                @if (cartItems()) {
-                  {{cartItems()}}
-                }@else{
-                  0
-                }
-              </span>
-            </a>
-          </li>
+  <div class="container">
+    <a class="navbar-brand" routerLink="home">
+      <img src="./assets/images/freshcart-logo.svg" alt="freshcart-logo">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+      <ul class="navbar-nav  mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active-link" routerLink="home">{{"navbar.home" | translate}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active-link" routerLink="products">{{"navbar.products" | translate}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active-link" routerLink="categories">{{"navbar.categories" |
+            translate}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active-link" routerLink="brands">{{"navbar.brands" | translate}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active-link" routerLink="allorders">{{"navbar.myOrders" |
+            translate}}</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{"navbar.lang" | translate}}
+          </a>
+          <ul class="dropdown-menu">
+            <li [class.bg-info]="_TranslateService.currentLang=='en'"><a (click)="changeLang('en')"
+                class="dropdown-item">EN</a></li>
+            <li [class.bg-info]="_TranslateService.currentLang=='ar'"><a (click)="changeLang('ar')"
+                class="dropdown-item">AR</a></li>
+
+          </ul>
+        </li>
+      </ul>
+      <ul class="navbar-nav  mb-2 mb-lg-0">
+        <li class="nav-item me-4 mt-1">
+          <a routerLink="wishlist" class="nav-link position-relative ">
+            <i class="fa-solid fa-heart text-danger fa-2xl"></i>
+            <span class="bg-main text-white position-absolute start-80 translate-middle px-2 py-1 bg-danger rounded ">
+              @if (wishListItems()) {
+              {{wishListItems()}}
+              }@else{
+              0
+              }
+            </span>
+          </a>
+        </li>
+        <li class="nav-item me-4 mt-1">
+          <a routerLink="cart" class="nav-link position-relative ">
+            <i class="fa-solid fa-cart-shopping  fa-2xl"></i>
+            <span class="bg-main text-white position-absolute start-80 translate-middle px-2 py-1 bg-danger rounded ">
+              @if (cartItems()) {
+              {{cartItems()}}
+              }@else{
+              0
+              }
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            <i class="fa-brands fa-facebook"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            <i class="fa-brands fa-twitter"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">
+            <i class="fa-brands fa-linkedin"></i>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-user fa-xl"></i>
+          </a>
+          <ul class="dropdown-menu">
             <li class="nav-item">
-                <a class="nav-link" >
-                    <i class="fa-brands fa-facebook"></i>
-                </a>
-              </li>
+              <a class="nav-link cr" (click)="_AuthenticationService.logOut()"> <i class="fa-solid fa-right-from-bracket fa-1"></i> {{"navbar.signout" | translate}} </a>
+            </li>
             <li class="nav-item">
-                <a class="nav-link" >
-                    <i class="fa-brands fa-twitter"></i>
-                </a>
-              </li>
-            <li class="nav-item">
-                <a class="nav-link" >
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-              </li>
-            <li class="nav-item">
-                <a class="nav-link" >
-                    <i class="fa-brands fa-linkedin"></i>
-                </a>
-              </li>
-           
-            <li class="nav-item">
-                <a class="nav-link cr" (click)="_AuthenticationService.logOut()">{{"navbar.signout" | translate}}</a>
-              </li>  
-        </ul>
-      </div>
+              <a class="nav-link cr" routerLink="settings"> <i class="fa-solid fa-gear fa-1"></i> {{"navbar.settings" | translate}}  </a>
+             
+            </li>
+
+          </ul>
+        </li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>

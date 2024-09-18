@@ -15,6 +15,7 @@ export class AuthenticationService {
   private readonly _Router=inject(Router);
 
   userData!:any
+  
   setRegisterForm(data:object):Observable<any>{
     return this._HttpClient.post(`${environment.baseUrl}/api/v1/auth/signup`, data);
   }
@@ -47,6 +48,16 @@ export class AuthenticationService {
   }
   setResetPass(data:object):Observable<any>{
     return this._HttpClient.put(`${environment.baseUrl}/api/v1/auth/resetPassword`,data)
+  }
+  updateAccount(data:object):Observable<any>{
+    return this._HttpClient.put(`${environment.baseUrl}/api/v1/users/updateMe/`,data)
+  }
+  updatePassword(data:object):Observable<any>{
+    return this._HttpClient.put(`${environment.baseUrl}/api/v1/users/changeMyPassword`,data,
+      {
+        headers:{token:localStorage.getItem('userToken')!}
+      }
+    )
   }
 
 }

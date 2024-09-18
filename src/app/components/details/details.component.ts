@@ -1,10 +1,11 @@
-import { Component, inject, WritableSignal, signal } from '@angular/core';
+import { Component, inject, WritableSignal, signal, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProuductsService } from '../../core/services/prouducts.service';
 import { IProduct } from '../../core/interfaces/iproduct';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { CartService } from '../../core/services/cart.service';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-details',
@@ -13,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
-export class DetailsComponent {
+export class DetailsComponent implements OnInit,OnDestroy{
   private readonly _ActivatedRoute = inject(ActivatedRoute);
   private readonly _ProuductsService = inject(ProuductsService);
   private readonly _CartService = inject(CartService);
@@ -21,6 +22,9 @@ export class DetailsComponent {
 
   
   detailsProduct:WritableSignal<IProduct> =signal({} as IProduct);
+  getSpecificProductsSub!:Subscription;
+  addToCartSub!:Subscription;
+  paramMapSub!:Subscription;
 
   customOptions: OwlOptions = {
     loop: true,
@@ -35,13 +39,13 @@ export class DetailsComponent {
   }
   
   ngOnInit(): void {
-    this._ActivatedRoute.paramMap.subscribe({
+    this.paramMapSub=this._ActivatedRoute.paramMap.subscribe({
       next:(p)=>{
         // console.log(p.get('id'));
         let idProduct:WritableSignal<string|null> = signal(p.get('id'))
          
 
-       this._ProuductsService.getSpecificProducts(idProduct()).subscribe({
+       this.getSpecificProductsSub=this._ProuductsService.getSpecificProducts(idProduct()).subscribe({
         next:(res)=>{
           console.log(res.data);
           
@@ -57,7 +61,7 @@ export class DetailsComponent {
 
 
   addProductToCart(productId:string):void{
-    this._CartService.addToCart(productId).subscribe({
+    this.addToCartSub=this._CartService.addToCart(productId).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
@@ -67,5 +71,11 @@ export class DetailsComponent {
         
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.getSpecificProductsSub?.unsubscribe();
+    this.addToCartSub?.unsubscribe();
+    this.paramMapSub?.unsubscribe();
   }
 }

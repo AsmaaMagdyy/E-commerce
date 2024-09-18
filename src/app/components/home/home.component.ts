@@ -10,11 +10,9 @@ import { ToastrService } from 'ngx-toastr';
 import { WishlistService } from '../../core/services/wishlist.service';
 import { CartService } from '../../core/services/cart.service';
 import { CurrencyPipe, DatePipe, isPlatformBrowser, NgClass, NgStyle } from '@angular/common';
-import { SalePipe } from '../../core/pipes/sale.pipe';
 import { TermTextPipe } from '../../core/pipes/term-text.pipe';
 import { SearchPipe } from '../../core/pipes/search.pipe';
 import { FormsModule } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -30,7 +28,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private readonly _WishlistService = inject(WishlistService);
   private readonly toastr = inject(ToastrService);
   private readonly _CartService = inject(CartService);
-  private readonly _NgxSpinnerService = inject(NgxSpinnerService);
   private readonly _PLATFORM_ID = inject(PLATFORM_ID)
 
 
@@ -43,7 +40,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   text:WritableSignal<string> = signal('');
 
 
-  getAllProductSub!: Subscription
+  getAllProductSub!: Subscription;
+  getAllCategoriesSub!: Subscription;
+  addProductToWishlistSub!: Subscription;
+  removeProductFromWishlistSub!: Subscription;
+  addToCartSub!: Subscription;
 
   customOptionsMain: OwlOptions = {
     loop: true,
@@ -91,7 +92,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._CategoriesService.getAllCategories().subscribe({
+    this.getAllCategoriesSub=this._CategoriesService.getAllCategories().subscribe({
       next: (res) => {
         // console.log(res.data);
         this.categoriesList.set(res.data);
@@ -132,12 +133,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   addToWishList(product: IProduct): void {
     console.log(product);
 
-    this._WishlistService.addProductToWishlist(product.id).subscribe({
+    this.addProductToWishlistSub=this._WishlistService.addProductToWishlist(product.id).subscribe({
       next: (res) => {
         if (res.status == 'success') {
+          console.log(res);
+          
           this.toastr.success(res.message);
-          this.wishlistArr.set([...res.data])
-          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr()))
+          this.wishlistArr.set([...res.data]);
+          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr()));
+          this._WishlistService.wishlistItemsNum.set(res.data.length);
           // console.log(this.wishlistArr);
 
         }
@@ -146,12 +150,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
   removeFromWishList(product: IProduct): void {
-    this._WishlistService.removeProductFromWishlist(product.id).subscribe({
+    this.removeProductFromWishlistSub=this._WishlistService.removeProductFromWishlist(product.id).subscribe({
       next: (res) => {
         if (res.status == 'success') {
           this.toastr.error('Products Removed Successfuly From Wishlist');
-          this.wishlistArr.set([...res.data])
-          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr()))
+          this.wishlistArr.set([...res.data]);
+          localStorage.setItem('wishlist', JSON.stringify(this.wishlistArr()));
+          this._WishlistService.wishlistItemsNum.set(res.data.length);
+
+
           // console.log(this.wishlistArr);
 
         }
@@ -169,7 +176,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   addProductToCart(productId: string): void {
-    this._CartService.addToCart(productId).subscribe({
+   this.addToCartSub= this._CartService.addToCart(productId).subscribe({
       next: (res) => {
         if (res.status == 'success') {
           this.toastr.success(res.message);
@@ -185,5 +192,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.getAllProductSub?.unsubscribe();
+    this.getAllCategoriesSub?.unsubscribe();
+    this.removeProductFromWishlistSub?.unsubscribe();
+    this.addProductToWishlistSub?.unsubscribe();
+    this.addToCartSub?.unsubscribe();
   }
 }

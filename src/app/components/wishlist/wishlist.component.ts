@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { WishlistService } from '../../core/services/wishlist.service';
 import { IProduct } from '../../core/interfaces/iproduct';
 import { ToastrService } from 'ngx-toastr';
 import { CartService } from '../../core/services/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-wishlist',
@@ -11,7 +12,7 @@ import { CartService } from '../../core/services/cart.service';
   templateUrl: './wishlist.component.html',
   styleUrl: './wishlist.component.scss'
 })
-export class WishlistComponent implements OnInit {
+export class WishlistComponent implements OnInit , OnDestroy {
   private readonly _WishlistService=inject(WishlistService);
   private readonly toastr=inject(ToastrService);
   private readonly _CartService=inject(CartService);
@@ -20,12 +21,15 @@ export class WishlistComponent implements OnInit {
   wishListItems:WritableSignal<IProduct[]>=signal([]);
   wishlistArr:WritableSignal<string[]>=signal([]);
 
+  getWishlistSub!:Subscription;
+  removeProductFromWishlistSub!:Subscription;
+  addToCartSub!:Subscription;
 
   ngOnInit(): void {
     this.getAllItemsInWishList()
   }
   getAllItemsInWishList():void{
-    this._WishlistService.getWishlist().subscribe({
+    this.getWishlistSub=this._WishlistService.getWishlist().subscribe({
       next: (res) => {
         console.log(res.data);
         this.wishListItems.set(res.data);
@@ -35,20 +39,23 @@ export class WishlistComponent implements OnInit {
   }
 
   removeFromWishlist(productId:string):void{
-    this._WishlistService.removeProductFromWishlist(productId).subscribe({
+    this.removeProductFromWishlistSub=this._WishlistService.removeProductFromWishlist(productId).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.error('Products Removed Successfuly From Wishlist');
           this.getAllItemsInWishList()
           this.wishlistArr.set([...res.data])
           localStorage.setItem('wishlist',JSON.stringify(this.wishlistArr()))
+          this._WishlistService.wishlistItemsNum.set(res.data.length);
+
+
         }
       }
     })
   }
 
   addProductToCart(productId:string):void{
-    this._CartService.addToCart(productId).subscribe({
+    this.addToCartSub=this._CartService.addToCart(productId).subscribe({
       next:(res)=>{
         if (res.status == 'success') {
           this.toastr.success(res.message);
@@ -60,5 +67,10 @@ export class WishlistComponent implements OnInit {
     })
   }
 
+ngOnDestroy(): void {
+  this.getWishlistSub?.unsubscribe();
+  this.removeProductFromWishlistSub?.unsubscribe();
+  this.addToCartSub?.unsubscribe();
+}
 
 }

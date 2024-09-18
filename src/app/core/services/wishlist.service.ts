@@ -1,16 +1,23 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environments';
-import { IProduct } from '../interfaces/iproduct';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WishlistService {
 
-
-  constructor(private _http: HttpClient) { }
+  wishlistItemsNum:WritableSignal<number>=signal(0);
+  constructor(private _http: HttpClient) {
+    this.getWishlist().subscribe({
+      next:(res)=>{
+        this.wishlistItemsNum.set(res.count);
+        console.log(this.wishlistItemsNum());
+        
+      }
+    })
+   }
 
   addProductToWishlist(id: string): Observable<any> {
     return this._http.post(`${environment.baseUrl}/api/v1/wishlist`,

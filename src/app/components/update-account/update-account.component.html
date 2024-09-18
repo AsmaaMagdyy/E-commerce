@@ -1,0 +1,78 @@
+<section class="bg-main-light shadow p-2 my-5">
+    <h1 class="h2 text-main">Update Now:</h1>
+  
+    <form [formGroup]="updateForm" (ngSubmit)="updateSubmit()">
+        <div class="my-2">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-control" formControlName="name"
+            [ngClass]="{
+            'is-valid': !updateForm.get('name')?.errors && (updateForm.get('name')?.touched || updateForm.get('name')?.dirty ),
+            'is-invalid': updateForm.get('name')?.errors && (updateForm.get('name')?.touched || updateForm.get('name')?.dirty )
+            }"
+            >
+            @if (updateForm.get('name')?.errors && (updateForm.get('name')?.touched || updateForm.get('name')?.dirty )) {
+                <div class="alert alert-danger py-2 my-0">
+                    @if (updateForm.get('name')?.getError('required')) {
+                        <p> Name is required</p>
+                    }
+                    @else if (updateForm.get('name')?.getError('minlength')) {
+                        <p>min length is 3 char</p>
+                    }
+                    @else if (updateForm.get('name')?.getError('maxlength')) {
+                        <p>max length is 20</p>
+                    }
+                   
+                </div>
+            }
+           
+        </div>
+        <div class="my-2">
+            <label for="email">email</label>
+            <input type="email" id="email" class="form-control" formControlName="email"
+            [ngClass]="{
+                'is-valid': !updateForm.get('email')?.errors && (updateForm.get('email')?.touched || updateForm.get('email')?.dirty ),
+                'is-invalid': updateForm.get('email')?.errors && (updateForm.get('email')?.touched || updateForm.get('email')?.dirty )
+                }"
+            >
+            @if (updateForm.get('email')?.errors && (updateForm.get('email')?.touched || updateForm.get('email')?.dirty)) {
+                <div class="alert alert-danger py-2 my-0">
+                    @if (updateForm.get('email')?.getError('required')) {
+                        <p> email is required</p>
+                    }
+                    @else if (updateForm.get('email')?.getError('email')) {
+                        <p>Email is Invalid</p>
+                    }
+                    
+                   
+                </div>
+            }
+        </div>
+        <div class="my-2">
+            <label for="phone">phone</label>
+            <input type="tel" id="phone" class="form-control" formControlName="phone"
+            [ngClass]="{
+                'is-valid': !updateForm.get('phone')?.errors && (updateForm.get('phone')?.touched || updateForm.get('phone')?.dirty ),
+                'is-invalid': updateForm.get('phone')?.errors && (updateForm.get('phone')?.touched || updateForm.get('phone')?.dirty )
+                }"
+            >
+            @if (updateForm.get('phone')?.errors && updateForm.get('phone')?.touched || updateForm.get('phone')?.dirty) {
+                <div>
+                    @if (updateForm.get('phone')?.getError('required')) {
+                        <p class="alert alert-danger py-2 my-0"> phone is required</p>
+                    }
+                    @else if (updateForm.get('phone')?.getError('pattern')) {
+                        <p class="alert alert-danger py-2 my-0">Enter valid phone number</p>
+                    }
+                    
+                   
+                </div>
+            }
+        </div>
+        <button  type="submit" class="btn-main ms-auto d-block">
+            @if(isLoading()){
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+            }
+            Update</button>
+    </form>
+</section>
